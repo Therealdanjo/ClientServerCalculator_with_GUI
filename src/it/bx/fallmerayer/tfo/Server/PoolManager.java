@@ -14,11 +14,12 @@ public class PoolManager{
         this.numbers = numbers;
     }
 
+    //starts the threads that calculate if a number is prime, collects the results from them and gives them back to the main program
     public Boolean[] calc() throws Exception {
         Boolean[] ret = new Boolean[numbers.length];
         ExecutorService executor = Executors.newCachedThreadPool();
         for (int i = 0; i < numbers.length; i++) {
-            Callable<Boolean> c = new PZPruefer(numbers[i]);
+            Callable<Boolean> c = new PnChecker(numbers[i]);
             Future<Boolean> result = executor.submit(c);
             ret[i] = result.get();
         }

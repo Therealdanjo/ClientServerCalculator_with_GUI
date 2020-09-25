@@ -7,13 +7,12 @@ import java.net.*;
 public class Server {
 
     // Vector to store active clients
-    static Vector<ClientHandler> ar = new Vector<>();           //Gleich wie eine synchronisierte Arraylist
+    static Vector<ClientHandler> ar = new Vector<>();       //Equals to a synchronized ArrayList
 
     // counter for clients
     static int i = 0;
 
-    public static void main(String[] args) throws IOException
-    {
+    public static void main(String[] args) throws IOException {
         // server is listening on port 42069
         ServerSocket ss = new ServerSocket(42069);
 
@@ -53,8 +52,8 @@ public class Server {
 // ClientHandler class
 class ClientHandler implements Runnable
 {
-    private String name;
-    private Socket s;
+    private final String name;
+    private final Socket s;
     boolean isloggedin;
 
     // constructor
@@ -64,6 +63,7 @@ class ClientHandler implements Runnable
         this.isloggedin=true;
     }
 
+    //Splits the received string and selects the operation to perform, then passes the numbers on to the respective methods
     private String calculate(String message) throws Exception {
         String[] parser = message.split(";");
         int mode = Integer.parseInt(parser[0]);
@@ -86,6 +86,7 @@ class ClientHandler implements Runnable
         return res;
     }
 
+    //adds all numbers and returns a string in the following format: x1+x2+...+xn=result
     private String add(long[] numbers){
         long res = 0;
         StringBuilder tmpstr = new StringBuilder();
@@ -102,6 +103,8 @@ class ClientHandler implements Runnable
         ms += "=" + res;
         return ms;
     }
+
+    //subtracts all numbers and returns a string in the following format: x1-x2-...-xn=result
     private String subtract(long[] numbers){
         long res = 0;
         StringBuilder tmpstr = new StringBuilder();
@@ -118,6 +121,8 @@ class ClientHandler implements Runnable
         ms += "=" + res;
         return ms;
     }
+
+    //multiplicates all numbers and returns a string in the following format: x1*x2*...*xn=result
     private String multiplicate(long[] numbers){
         long res = 1;
         StringBuilder tmpstr = new StringBuilder();
@@ -134,6 +139,7 @@ class ClientHandler implements Runnable
         ms += "=" + res;
         return ms;
     }
+    //Checks if the numbers are prime and returns a string in the following format: x1:tf x2:tf ... -> tf=true/false
     private String primeNumbers(long[] numbers) throws Exception {
         PoolManager manager = new PoolManager(numbers);
         Boolean[] result = manager.calc();
@@ -147,8 +153,10 @@ class ClientHandler implements Runnable
         return tmpstr.toString();
     }
 
+    //Handles all the operations for a client
     @Override
     public void run() {
+        //login to the server, for now only an admin account is checked (testing purposes only)
         String[] data = null;
         while(true) {
             try {
@@ -157,10 +165,11 @@ class ClientHandler implements Runnable
             } catch (Exception e) {
                 e.printStackTrace();
             }
+            //returns "OK" to the client if the login was successful, otherwise "FALSE" is returned
             if (data != null && data[0].equals("admin") && data[1].equals("admin")) {
                 try {
                     writeMessage(s, "OK");
-                    System.out.println("Client "+ Server.i +" logged in successfully!");
+                    System.out.println(name + " logged in successfully!");
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -168,7 +177,7 @@ class ClientHandler implements Runnable
             } else {
                 try {
                     writeMessage(s, "FAILED");
-                    System.out.println("Client "+ Server.i +" login failed!");
+                    System.out.println(name + " login failed!");
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -181,7 +190,6 @@ class ClientHandler implements Runnable
             try {
                 // receive the string
                 received = readMessage(s);
-
 
                 //print the received string on the server console
                 System.out.println("From: " + name + ": " + received);
@@ -196,21 +204,23 @@ class ClientHandler implements Runnable
                     break;
                 }
 
+                //Calculate and write back to the client
                 writeMessage(s, calculate(received));
 
             } catch (Exception e) {
-
                 e.printStackTrace();
             }
 
         }
     }
 
+    //Reads from the client
     public static String readMessage(Socket s) throws Exception{
         BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(s.getInputStream()));
         return bufferedReader.readLine();
     }
 
+    //writes to the client
     public static void writeMessage(Socket s, String message) throws Exception {
         PrintWriter printWriter = new PrintWriter(s.getOutputStream());
         printWriter.println(message);
