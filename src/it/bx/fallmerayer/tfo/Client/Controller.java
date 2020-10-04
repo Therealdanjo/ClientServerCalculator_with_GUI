@@ -5,6 +5,7 @@ import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
 import javafx.scene.control.*;
 import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.Button;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
@@ -29,8 +30,11 @@ public class Controller {
     public TextField inputField;
     public TextArea resArea;
     public Hyperlink help, about, code;
+    public Button exitbtn;
+    public Label loginStatus;
 
     protected static Socket s;
+    private String connecteduser;
 
     //method executed when starting
     public void initialize() {
@@ -57,6 +61,10 @@ public class Controller {
         //after a successful connection with the server, the login process is started
         logIn();
 
+        //If the admin is connected, shutdown is shown instead of logout in the button
+        if (connecteduser.equals("admin")){
+            exitbtn.setText("Shut down");
+        }
     }
 
     //logs the user in to the server via a custom login dialog
@@ -122,13 +130,25 @@ public class Controller {
             alert.showAndWait();
 
             logIn();
+        } else if (checklogin != null && checklogin.equals("ACONNECTED")){          //If the user is already connected, an error is shown and the login process starts over
+            Alert alert = new Alert(AlertType.ERROR);
+            alert.setTitle("Error");
+            alert.setHeaderText("Login Failed");
+            alert.setContentText("This user is already logged in, try with another one!");
+
+            alert.showAndWait();
+
+            logIn();
+        } else if (checklogin != null && checklogin.equals("OK")){          //If the login process was succesful, the program continues and the username that is logged in is displayed on the GUI
+            connecteduser = username.getText();
+            loginStatus.setText("You are logged in as: " + connecteduser);
         }
     }
 
     //writes to the server
-    private static void writeMessage(Socket s, String nachricht) throws Exception {
+    private static void writeMessage(Socket s, String message) throws Exception {
         PrintWriter printWriter = new PrintWriter(s.getOutputStream(), true);
-        printWriter.println(nachricht);
+        printWriter.println(message);
     }
 
     //reads from the server
@@ -137,13 +157,22 @@ public class Controller {
         return bufferedReader.readLine();
     }
 
-    //if the logout button is pressed, the user gets logged out from the server and the program stops (Function has more potential!)
+    //if the logout button is pressed, the user gets logged out from the server and the program stops. If the user is the admin, the server is also shut down.
     public void logoutAndExit(ActionEvent actionEvent) {
-        try {
-            writeMessage(s, "logout");
-        } catch (Exception e) {
-            e.printStackTrace();
+        if (connecteduser.equals("admin")){
+            try {
+                writeMessage(s, "SHUTDOWN");
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        } else {
+            try {
+                writeMessage(s, "LOGOUT");
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
+
         Platform.exit();
     }
 
@@ -184,7 +213,7 @@ public class Controller {
             //gets the result from the server and prints it in the textArea
             try {
                 String result = readMessage(s);
-                resArea.setText(resArea.getText() + "\n" + result);
+                resArea.setText(resArea.getText() + result + "\n");
             } catch (Exception e) {
                 e.printStackTrace();
             }
