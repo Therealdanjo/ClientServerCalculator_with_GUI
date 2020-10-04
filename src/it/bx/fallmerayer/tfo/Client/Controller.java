@@ -106,8 +106,10 @@ public class Controller {
 
         Optional<Pair<String, String>> result = dialog.showAndWait();
 
+        final String[] user = new String[1];
         //Writes username and password to the server
         result.ifPresent(usernamePassword -> {
+            user[0] = usernamePassword.getKey();
             try {
                 writeMessage(s, usernamePassword.getKey() + ";" + usernamePassword.getValue());
             } catch (Exception e) {

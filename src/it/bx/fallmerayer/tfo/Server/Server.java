@@ -1,5 +1,7 @@
 package it.bx.fallmerayer.tfo.Server;
 
+import javafx.application.Platform;
+
 import java.io.*;
 import java.util.*;
 import java.net.*;
@@ -12,15 +14,17 @@ public class Server {
     // counter for clients
     static int i = 0;
 
+    protected static ArrayList<User> userslist;
     public static void main(String[] args) throws IOException {
+        //Reads the users from users.csv and saves them to userslist
+        importUsers();
         // server is listening on port 42069
         ServerSocket ss = new ServerSocket(42069);
 
         Socket s;
 
-        // running loop for getting client requests, breaks up after 10 clients
-        while (i<=10)
-        {
+        // running loop for getting client requests
+        while (true) {
             // Accept the incoming request
             s = ss.accept();
 
@@ -46,21 +50,30 @@ public class Server {
 
         }
     }
+    //Reads the users from the users.csv file and imports them into the user list
+    protected static void importUsers() throws IOException {
+        BufferedReader br = new BufferedReader(new FileReader("C:\\Users\\Daniele\\Google Drive\\TP\\Uebungen\\01_ClientServer_GUI\\src\\it\\bx\\fallmerayer\\tfo\\Server\\users.csv"));
+        String line;
+        userslist = new ArrayList<>();
+        while ((line = br.readLine()) != null){
+            String[] values = line.split(";");
+            userslist.add(new User(values[0], values[1], false));
+        }
+    }
 
 }
 
 // ClientHandler class
-class ClientHandler implements Runnable
-{
+class ClientHandler implements Runnable {
     private final String name;
     private final Socket s;
     boolean isloggedin;
+    private User activeUser;
 
-    // constructor
     public ClientHandler(Socket s, String name) {
         this.name = name;
         this.s = s;
-        this.isloggedin=true;
+        this.isloggedin=false;
     }
 
     //Splits the received string and selects the operation to perform, then passes the numbers on to the respective methods
@@ -153,39 +166,56 @@ class ClientHandler implements Runnable
         return tmpstr.toString();
     }
 
-    //Handles all the operations for a client
-    @Override
-    public void run() {
-        //login to the server, for now only an admin account is checked (testing purposes only)
+    //checks if the user exists. If it exists and it's not logged in writes OK to the client, otherwise it sends the respective errors
+    private void logIn() {
         String[] data = null;
-        while(true) {
-            try {
-                String login = readMessage(s);
-                data = login.split(";");
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            //returns "OK" to the client if the login was successful, otherwise "FALSE" is returned
-            if (data != null && data[0].equals("admin") && data[1].equals("admin")) {
+
+        try {
+            String login = readMessage(s);
+            data = login.split(";");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        assert data != null;
+        for (User u: Server.userslist) {
+            if(data[0].equals(u.getUsername()) && data[1].equals(u.getPassword()) && !u.isLoggedin()){
                 try {
+                    u.setLoggedin(true);
                     writeMessage(s, "OK");
                     System.out.println(name + " logged in successfully!");
+                    activeUser=new User(u.getUsername(), u.getPassword(), true);
+                    return;
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-                break;
-            } else {
+            } else if (data[0].equals(u.getUsername()) && data[1].equals(u.getPassword()) && u.isLoggedin()){
                 try {
-                    writeMessage(s, "FAILED");
-                    System.out.println(name + " login failed!");
+                    writeMessage(s, "ACONNECTED");
+                    System.out.println(name + " is already logged in!");
+                    logIn();
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
         }
+        try {
+            writeMessage(s, "FAILED");
+            System.out.println(name + " login failed!");
+            logIn();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    //Handles all the operations for a client
+    @Override
+    public void run() {
+        //Starts the login process
+        logIn();
 
         String received;
         //listens to messages from client
+        label:
         while (true) {
             try {
                 // receive the string
@@ -194,14 +224,22 @@ class ClientHandler implements Runnable
                 //print the received string on the server console
                 System.out.println("From: " + name + ": " + received);
 
-                //if logout received, close connection and set isloggedin to false
-                if(received.equals("logout")){
-                    this.isloggedin=false;
-                    this.s.close();
-                    break;
-                }if(received.equals("help")){
-                    writeMessage(s, "Choose an option from the menu, type the respective number in the console and press enter. You then will be prompted to input your numbers. Press enter after very number to confirm your input. Press q to exit the number input. Your selected operation will now be processed automatically");
-                    break;
+                //if logout received, close connection and set isloggedin to false, if shutdown, the server is closed
+                switch (received) {
+                    case "LOGOUT":
+                        this.isloggedin = false;
+                        int userIndex = searchElement(Server.userslist, activeUser);
+                        if (userIndex > 0) {
+                            Server.userslist.get(userIndex).setLoggedin(false);
+                        }
+                        this.s.close();
+                        break label;
+                    case "help":
+                        writeMessage(s, "Choose an option from the menu, type the respective number in the console and press enter. You then will be prompted to input your numbers. Press enter after very number to confirm your input. Press q to exit the number input. Your selected operation will now be processed automatically");
+                        break label;
+                    case "SHUTDOWN":
+                        this.s.close();
+                        System.exit(0);
                 }
 
                 //Calculate and write back to the client
@@ -227,4 +265,13 @@ class ClientHandler implements Runnable
         printWriter.flush();
     }
 
+    //Searches an user in a list and returns its index
+    private int searchElement(ArrayList<User> list, User user){
+        for (int i = 0; i < list.size(); i++) {
+            if(user.compareUsers(list.get(i))){
+                return i;
+            }
+        }
+        return -1;
+    }
 }

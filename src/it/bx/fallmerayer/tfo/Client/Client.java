@@ -15,6 +15,7 @@ public class Client extends Application {
     public void start(Stage primaryStage) throws Exception{
         Parent root = FXMLLoader.load(getClass().getResource("gui.fxml"));
         primaryStage.setTitle("Calculator");
+        primaryStage.setResizable(false);
         primaryStage.setScene(new Scene(root, 600, 400));
         primaryStage.show();
         //Sends Logout message if "Close" button is pressed

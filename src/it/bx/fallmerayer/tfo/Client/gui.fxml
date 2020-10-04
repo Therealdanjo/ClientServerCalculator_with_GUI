@@ -18,103 +18,105 @@
 <?import javafx.scene.text.Font?>
 
 <Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.bx.fallmerayer.tfo.Client.Controller">
-   <children>
-      <BorderPane layoutX="6.0" prefHeight="400.0" prefWidth="600.0">
-         <left>
-            <VBox prefHeight="360.0" prefWidth="158.0" BorderPane.alignment="CENTER">
-               <children>
-                  <RadioButton fx:id="rb1" mnemonicParsing="false" text="Additon">
-                     <padding>
+    <children>
+        <BorderPane layoutX="6.0" prefHeight="400.0" prefWidth="600.0">
+            <left>
+                <VBox prefHeight="360.0" prefWidth="158.0" BorderPane.alignment="CENTER">
+                    <children>
+                        <RadioButton fx:id="rb1" mnemonicParsing="false" text="Additon">
+                            <padding>
+                                <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                            </padding>
+                        </RadioButton>
+                        <RadioButton fx:id="rb2" mnemonicParsing="false" text="Subtraction">
+                            <padding>
+                                <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                            </padding>
+                        </RadioButton>
+                        <RadioButton fx:id="rb3" mnemonicParsing="false" text="Multiplication">
+                            <padding>
+                                <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                            </padding>
+                        </RadioButton>
+                        <RadioButton fx:id="rb4" mnemonicParsing="false" text="Check prime numbers">
+                            <padding>
+                                <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                            </padding>
+                        </RadioButton>
+                    </children>
+                </VBox>
+            </left>
+            <center>
+                <GridPane prefHeight="399.0" prefWidth="479.0" BorderPane.alignment="CENTER">
+                    <columnConstraints>
+                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="352.0" minWidth="10.0" prefWidth="317.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="219.0" minWidth="10.0" prefWidth="132.0" />
+                    </columnConstraints>
+                    <rowConstraints>
+                        <RowConstraints maxHeight="85.0" minHeight="3.0" prefHeight="41.0" vgrow="SOMETIMES" />
+                        <RowConstraints maxHeight="147.0" minHeight="0.0" prefHeight="40.0" vgrow="SOMETIMES" />
+                        <RowConstraints maxHeight="179.0" minHeight="7.0" prefHeight="19.0" vgrow="SOMETIMES" />
+                        <RowConstraints maxHeight="179.0" minHeight="10.0" prefHeight="25.0" vgrow="SOMETIMES" />
+                        <RowConstraints maxHeight="177.0" minHeight="10.0" prefHeight="177.0" vgrow="SOMETIMES" />
+                    </rowConstraints>
+                    <padding>
+                        <Insets bottom="10.0" left="10.0" right="20.0" />
+                    </padding>
+                    <children>
+                        <Label text="Please enter your numbers separated by a semicolon (;)!" />
+                        <TextField fx:id="inputField" GridPane.rowIndex="1" />
+                        <Button alignment="CENTER" mnemonicParsing="false" onAction="#send" text="Send" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                            <GridPane.margin>
+                                <Insets left="10.0" />
+                            </GridPane.margin>
+                        </Button>
+                        <Separator prefHeight="2.0" prefWidth="336.0" GridPane.columnSpan="2" GridPane.rowIndex="2">
+                            <padding>
+                                <Insets right="20.0" />
+                            </padding>
+                        </Separator>
+                        <TextArea fx:id="resArea" prefHeight="200.0" prefWidth="200.0" GridPane.rowIndex="4" />
+                        <Label prefHeight="17.0" prefWidth="327.0" text="Your result(s):" GridPane.rowIndex="3" />
+                    </children>
+                </GridPane>
+            </center>
+            <bottom>
+                <ToolBar prefHeight="40.0" prefWidth="600.0" BorderPane.alignment="BOTTOM_LEFT">
+                    <items>
+                        <Hyperlink fx:id="help" onAction="#linkController" text="Help" />
+                        <Hyperlink fx:id="about" onAction="#linkController" text="About" />
+                        <Hyperlink fx:id="code" onAction="#linkController" text="Code" />
+                    </items>
+                </ToolBar>
+            </bottom>
+            <top>
+                <GridPane BorderPane.alignment="CENTER">
+                    <columnConstraints>
+                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="527.0" minWidth="10.0" prefWidth="248.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="527.0" minWidth="10.0" prefWidth="302.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="295.0" minWidth="10.0" prefWidth="66.0" />
+                    </columnConstraints>
+                    <rowConstraints>
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                    </rowConstraints>
+                    <children>
+                        <Label prefHeight="17.0" prefWidth="459.0" text="Client-Server Calculator">
+                            <font>
+                                <Font size="20.0" />
+                            </font>
+                        </Label>
+                        <Button alignment="CENTER_RIGHT" contentDisplay="RIGHT" mnemonicParsing="false" onAction="#logoutAndExit" text="Logout" GridPane.columnIndex="2" fx:id="exitbtn">
+                            <GridPane.margin>
+                                <Insets />
+                            </GridPane.margin>
+                        </Button>
+                        <Label fx:id="loginStatus" alignment="CENTER_RIGHT" contentDisplay="RIGHT" prefHeight="17.0" prefWidth="280.0" text="You are logged in as:" GridPane.columnIndex="1" />
+                    </children>
+                    <BorderPane.margin>
                         <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-                     </padding>
-                  </RadioButton>
-                  <RadioButton fx:id="rb2" mnemonicParsing="false" text="Subtraction">
-                     <padding>
-                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-                     </padding>
-                  </RadioButton>
-                  <RadioButton fx:id="rb3" mnemonicParsing="false" text="Multiplication">
-                     <padding>
-                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-                     </padding>
-                  </RadioButton>
-                  <RadioButton fx:id="rb4" mnemonicParsing="false" text="Check prime numbers">
-                     <padding>
-                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-                     </padding>
-                  </RadioButton>
-               </children>
-            </VBox>
-         </left>
-         <center>
-            <GridPane prefHeight="399.0" prefWidth="479.0" BorderPane.alignment="CENTER">
-              <columnConstraints>
-                <ColumnConstraints hgrow="SOMETIMES" maxWidth="352.0" minWidth="10.0" prefWidth="317.0" />
-                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="219.0" minWidth="10.0" prefWidth="132.0" />
-              </columnConstraints>
-              <rowConstraints>
-                <RowConstraints maxHeight="85.0" minHeight="3.0" prefHeight="41.0" vgrow="SOMETIMES" />
-                  <RowConstraints maxHeight="147.0" minHeight="0.0" prefHeight="40.0" vgrow="SOMETIMES" />
-                  <RowConstraints maxHeight="179.0" minHeight="7.0" prefHeight="19.0" vgrow="SOMETIMES" />
-                  <RowConstraints maxHeight="179.0" minHeight="10.0" prefHeight="25.0" vgrow="SOMETIMES" />
-                <RowConstraints maxHeight="177.0" minHeight="10.0" prefHeight="177.0" vgrow="SOMETIMES" />
-              </rowConstraints>
-               <padding>
-                  <Insets bottom="10.0" left="10.0" right="20.0" />
-               </padding>
-               <children>
-                  <Label text="Please enter your numbers separated by a semicolon (;)!" />
-                  <TextField fx:id="inputField" GridPane.rowIndex="1" />
-                  <Button alignment="CENTER" mnemonicParsing="false" onAction="#send" text="Send" GridPane.columnIndex="1" GridPane.rowIndex="1">
-                     <GridPane.margin>
-                        <Insets left="10.0" />
-                     </GridPane.margin>
-                  </Button>
-                  <Separator prefHeight="2.0" prefWidth="336.0" GridPane.columnSpan="2" GridPane.rowIndex="2">
-                     <padding>
-                        <Insets right="20.0" />
-                     </padding>
-                  </Separator>
-                  <TextArea fx:id="resArea" prefHeight="200.0" prefWidth="200.0" GridPane.rowIndex="4" />
-                  <Label prefHeight="17.0" prefWidth="327.0" text="Your result(s):" GridPane.rowIndex="3" />
-               </children>
-            </GridPane>
-         </center>
-         <bottom>
-            <ToolBar prefHeight="40.0" prefWidth="600.0" BorderPane.alignment="CENTER_LEFT">
-               <items>
-                  <Hyperlink fx:id="help" onAction="#linkController" text="Help" />
-                  <Hyperlink fx:id="about" onAction="#linkController" text="About" />
-                  <Hyperlink fx:id="code" onAction="#linkController" text="Code" />
-               </items>
-            </ToolBar>
-         </bottom>
-         <top>
-            <GridPane BorderPane.alignment="CENTER">
-              <columnConstraints>
-                <ColumnConstraints hgrow="SOMETIMES" maxWidth="475.0" minWidth="10.0" prefWidth="456.0" />
-                <ColumnConstraints hgrow="SOMETIMES" maxWidth="295.0" minWidth="10.0" prefWidth="144.0" />
-              </columnConstraints>
-              <rowConstraints>
-                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-              </rowConstraints>
-               <children>
-                  <Label prefHeight="17.0" prefWidth="459.0" text="Client-Server Calculator">
-                     <font>
-                        <Font size="20.0" />
-                     </font>
-                  </Label>
-                  <Button alignment="CENTER_RIGHT" contentDisplay="RIGHT" mnemonicParsing="false" onAction="#logoutAndExit" text="Logout" GridPane.columnIndex="1">
-                     <GridPane.margin>
-                        <Insets left="60.0" />
-                     </GridPane.margin>
-                  </Button>
-               </children>
-               <BorderPane.margin>
-                  <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-               </BorderPane.margin>
-            </GridPane>
-         </top>
-      </BorderPane>
-   </children>
+                    </BorderPane.margin>
+                </GridPane>
+            </top>
+        </BorderPane>
+    </children>
 </Pane>
